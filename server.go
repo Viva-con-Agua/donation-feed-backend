@@ -18,7 +18,7 @@ func main() {
 	e.Use(vcago.CORS.Init())
 	e.Use(vcago.Logger.Init("donation-feed-backend"))
 
-	donationEvents := make(chan dao.DonationEvent)
+	donationEvents := make(chan dao.ServerSentEvent[dao.DonationEvent])
 	defer close(donationEvents)
 	testEmitEvents(donationEvents)
 
@@ -28,16 +28,20 @@ func main() {
 	e.Logger.Fatal(e.Start(":" + strconv.Itoa(cfg.AppPort)))
 }
 
-func testEmitEvents(eventChan chan dao.DonationEvent) {
-	ticker := time.NewTicker(300 * time.Millisecond)
+func testEmitEvents(eventChan chan dao.ServerSentEvent[dao.DonationEvent]) {
+	ticker := time.NewTicker(5000 * time.Millisecond)
 	go func() {
 		for {
 			<-ticker.C
-			event := dao.DonationEvent{
-				Name: "test",
-				Money: vcago.Money{
-					Amount:   10,
-					Currency: "€",
+			event := dao.ServerSentEvent[dao.DonationEvent]{
+				ID:        0,
+				EventType: "donation",
+				Data: dao.DonationEvent{
+					Name: "finn",
+					Money: vcago.Money{
+						Amount:   10,
+						Currency: "€",
+					},
 				},
 			}
 
