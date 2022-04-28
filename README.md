@@ -14,7 +14,7 @@ The response consists of [Server-sent events](https://developer.mozilla.org/en-U
 with their data in the following format (defined
 in [DonationEvent type](https://github.com/Viva-con-Agua/donation-feed-backend/blob/main/dao/donationEvent.go)):
 
-```json
+```
 {
   "name": <string or null>,
   "money": {
