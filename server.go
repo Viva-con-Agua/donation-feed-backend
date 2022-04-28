@@ -1,7 +1,7 @@
 package main
 
 import (
-	"donation-feed-backend/config"
+	"donation-feed-backend/args"
 	"donation-feed-backend/dao"
 	"donation-feed-backend/handlers"
 	"github.com/Viva-con-Agua/vcago"
@@ -11,8 +11,7 @@ import (
 )
 
 func main() {
-	args := config.ParseProgramArgs()
-	cfg := config.LoadFromEnv()
+	programArgs := args.ParseProgramArgs()
 	e := echo.New()
 	e.HTTPErrorHandler = vcago.HTTPErrorHandler
 	e.Validator = vcago.JSONValidator
@@ -22,7 +21,7 @@ func main() {
 	donationEvents := make(chan dao.ServerSentEvent[dao.DonationEvent])
 	defer close(donationEvents)
 
-	if *args.StartDummyEmitter {
+	if *programArgs.StartDummyEmitter {
 		e.Logger.Info("Starting dummy emitter to emit fake donation events")
 		go runDummyEmitter(donationEvents)
 	}
@@ -30,7 +29,7 @@ func main() {
 	api := e.Group("/api")
 	api.GET("/donations", handlers.CreateHandlerForDonationFeed(donationEvents))
 
-	e.Logger.Fatal(e.Start(":" + strconv.Itoa(cfg.AppPort)))
+	e.Logger.Fatal(e.Start(":" + strconv.Itoa(*programArgs.Port)))
 }
 
 // Run an emitter that periodically publishes donation events on the given channel
