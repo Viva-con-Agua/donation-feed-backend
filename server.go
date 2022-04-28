@@ -2,9 +2,12 @@ package main
 
 import (
 	"donation-feed-backend/config"
+	"donation-feed-backend/dao"
+	"donation-feed-backend/handlers"
 	"github.com/Viva-con-Agua/vcago"
 	"github.com/labstack/echo/v4"
 	"strconv"
+	"time"
 )
 
 func main() {
@@ -15,5 +18,34 @@ func main() {
 	e.Use(vcago.CORS.Init())
 	e.Use(vcago.Logger.Init("donation-feed-backend"))
 
+	donationEvents := make(chan dao.DonationEvent)
+	defer close(donationEvents)
+	testEmitEvents(donationEvents)
+
+	api := e.Group("/api")
+	api.GET("/donations", handlers.CreateHandlerForDonationFeed(donationEvents))
+
 	e.Logger.Fatal(e.Start(":" + strconv.Itoa(cfg.AppPort)))
+}
+
+func testEmitEvents(eventChan chan dao.DonationEvent) {
+	ticker := time.NewTicker(300 * time.Millisecond)
+	go func() {
+		for {
+			<-ticker.C
+			event := dao.DonationEvent{
+				Name: "test",
+				Money: vcago.Money{
+					Amount:   10,
+					Currency: "€",
+				},
+			}
+
+			// send event if possible, otherwise ignore it
+			select {
+			case eventChan <- event:
+			default:
+			}
+		}
+	}()
 }
