@@ -36,10 +36,6 @@ func writeEvent(writer http.ResponseWriter, event *dao.ServerSentEvent[dao.Donat
 	if _, err := fmt.Fprintf(writer, "event: %s\n", event.EventType); err != nil {
 		return err
 	}
-	// write "id" field
-	if _, err = fmt.Fprintf(writer, "id: %d\n", event.ID); err != nil {
-		return err
-	}
 	// write "data field"
 	if _, err = fmt.Fprint(writer, "data: "); err != nil {
 		return err

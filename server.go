@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+	args := config.ParseProgramArgs()
 	cfg := config.LoadFromEnv()
 	e := echo.New()
 	e.HTTPErrorHandler = vcago.HTTPErrorHandler
@@ -20,7 +21,11 @@ func main() {
 
 	donationEvents := make(chan dao.ServerSentEvent[dao.DonationEvent])
 	defer close(donationEvents)
-	testEmitEvents(donationEvents)
+
+	if *args.StartDummyEmitter {
+		e.Logger.Info("Starting dummy emitter to emit fake donation events")
+		go runDummyEmitter(donationEvents)
+	}
 
 	api := e.Group("/api")
 	api.GET("/donations", handlers.CreateHandlerForDonationFeed(donationEvents))
@@ -28,28 +33,26 @@ func main() {
 	e.Logger.Fatal(e.Start(":" + strconv.Itoa(cfg.AppPort)))
 }
 
-func testEmitEvents(eventChan chan dao.ServerSentEvent[dao.DonationEvent]) {
+// Run an emitter that periodically publishes donation events on the given channel
+func runDummyEmitter(eventChan chan dao.ServerSentEvent[dao.DonationEvent]) {
 	ticker := time.NewTicker(5000 * time.Millisecond)
-	go func() {
-		for {
-			<-ticker.C
-			event := dao.ServerSentEvent[dao.DonationEvent]{
-				ID:        0,
-				EventType: "donation",
-				Data: dao.DonationEvent{
-					Name: "finn",
-					Money: vcago.Money{
-						Amount:   10,
-						Currency: "€",
-					},
+	for {
+		<-ticker.C
+		event := dao.ServerSentEvent[dao.DonationEvent]{
+			EventType: "donation",
+			Data: dao.DonationEvent{
+				Name: "finn",
+				Money: vcago.Money{
+					Amount:   10,
+					Currency: "€",
 				},
-			}
-
-			// send event if possible, otherwise ignore it
-			select {
-			case eventChan <- event:
-			default:
-			}
+			},
 		}
-	}()
+
+		// send event if possible, otherwise ignore it
+		select {
+		case eventChan <- event:
+		default:
+		}
+	}
 }
