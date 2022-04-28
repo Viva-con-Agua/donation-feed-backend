@@ -19,6 +19,12 @@ type DonationEvent struct {
 	// Can also be nil
 	Name string `json:"name"`
 
-	// The amount of money that was donated
-	Money vcago.Money `json:"money"`
+	// The amount of money that was donated in this donation
+	DonatedMoney vcago.Money `json:"money"`
+
+	// The total amount of money that has been accumulated through donations in all currencies.
+	//
+	// The currency (e.g. "€") serves as the map key while the total amount of donated money in that currency is the
+	// maps value.
+	TotalMoney map[string]int64 `json:"totalMoney"`
 }

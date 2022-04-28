@@ -34,16 +34,21 @@ func main() {
 // Run an emitter that periodically publishes donation events on the given channel
 func runDummyEmitter(eventChan chan dao.ServerSentEvent[dao.DonationEvent]) {
 	ticker := time.NewTicker(5000 * time.Millisecond)
+	totalMoney := make(map[string]int64)
+	totalMoney["€"] = 0
+
 	for {
 		<-ticker.C
+		totalMoney["€"] += 10
 		event := dao.ServerSentEvent[dao.DonationEvent]{
 			EventType: "donation",
 			Data: dao.DonationEvent{
 				Name: "finn",
-				Money: vcago.Money{
+				DonatedMoney: vcago.Money{
 					Amount:   10,
 					Currency: "€",
 				},
+				TotalMoney: totalMoney,
 			},
 		}
 

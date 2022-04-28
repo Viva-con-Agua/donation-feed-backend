@@ -45,7 +45,7 @@ func writeEvent(writer http.ResponseWriter, event *dao.ServerSentEvent[dao.Donat
 		return err
 	}
 	// write separator
-	if _, err = fmt.Fprint(writer, "\n\n"); err != nil {
+	if _, err = fmt.Fprint(writer, "\n"); err != nil {
 		return err
 	}
 	return nil
