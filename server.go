@@ -18,16 +18,15 @@ func main() {
 	e.Use(vcago.CORS.Init())
 	e.Use(vcago.Logger.Init("donation-feed-backend"))
 
-	donationEvents := make(chan dao.ServerSentEvent[dao.DonationEvent])
-	defer close(donationEvents)
+	eventChan := make(chan dao.ServerSentEvent[dao.DonationEvent])
+	defer close(eventChan)
 
 	if *programArgs.StartDummyEmitter {
 		e.Logger.Info("Starting dummy emitter to emit fake donation events")
-		go runDummyEmitter(donationEvents)
+		go runDummyEmitter(eventChan)
 	}
 
-	api := e.Group("/api")
-	api.GET("/donations", handlers.CreateHandlerForDonationFeed(donationEvents))
+	e.GET("/api/donation-events", handlers.CreateHandlerForDonationFeed(eventChan))
 
 	e.Logger.Fatal(e.Start(":" + strconv.Itoa(*programArgs.Port)))
 }
