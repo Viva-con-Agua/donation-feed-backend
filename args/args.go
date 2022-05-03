@@ -8,6 +8,7 @@ import (
 type ProgramArguments struct {
 	StartDummyEmitter *bool
 	Port              *int
+	NatsUrl           *string
 }
 
 func ParseProgramArgs() ProgramArguments {
@@ -22,6 +23,11 @@ func ParseProgramArgs() ProgramArguments {
 		"port",
 		vcago.Config.GetEnvInt("APP_PORT", "n", 8080),
 		"On which port that application should listen",
+	)
+	args.NatsUrl = flag.String(
+		"nats-url",
+		vcago.Config.GetEnvString("APP_NATS_URL", "e", ""),
+		"A nats:// url that is used to connect to a running NATS server",
 	)
 
 	flag.Parse()

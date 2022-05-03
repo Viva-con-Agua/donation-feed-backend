@@ -11,4 +11,4 @@ This service provides the backend for that.
 A client can request the server to send it events by doing `GET /api/donation-events`.
 
 The response consists of [Server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events)
-with their data in the format defined by the [DonationEvent type](https://github.com/Viva-con-Agua/donation-feed-backend/blob/main/dao/donationEvent.go)).
+with their data in the format defined by the [DonationEvent type](https://github.com/Viva-con-Agua/donation-feed-backend/blob/main/dao/donationEvent.go).
