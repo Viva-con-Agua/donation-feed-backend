@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"donation-feed-backend/args"
-	"donation-feed-backend/broadcastChannel"
-	"donation-feed-backend/dao"
-	"donation-feed-backend/db"
-	"donation-feed-backend/handlers"
-	"donation-feed-backend/nats"
+	"github.com/Viva-con-Agua/donation-feed-backend/args"
+	"github.com/Viva-con-Agua/donation-feed-backend/broadcastChannel"
+	"github.com/Viva-con-Agua/donation-feed-backend/dao"
+	"github.com/Viva-con-Agua/donation-feed-backend/db"
+	"github.com/Viva-con-Agua/donation-feed-backend/handlers"
+	"github.com/Viva-con-Agua/donation-feed-backend/nats"
 	"github.com/Viva-con-Agua/vcago"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"

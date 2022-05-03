@@ -1,7 +1,7 @@
 package nats
 
 import (
-	"donation-feed-backend/dao"
+	"github.com/Viva-con-Agua/donation-feed-backend/dao"
 	"github.com/nats-io/nats.go"
 )
 

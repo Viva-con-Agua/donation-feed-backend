@@ -1,7 +1,7 @@
 package nats
 
 import (
-	"donation-feed-backend/args"
+	"github.com/Viva-con-Agua/donation-feed-backend/args"
 	"github.com/labstack/gommon/log"
 	"github.com/nats-io/nats.go"
 )

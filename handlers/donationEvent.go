@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"donation-feed-backend/broadcastChannel"
-	"donation-feed-backend/dao"
 	"encoding/json"
 	"fmt"
+	"github.com/Viva-con-Agua/donation-feed-backend/broadcastChannel"
+	"github.com/Viva-con-Agua/donation-feed-backend/dao"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )

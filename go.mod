@@ -1,4 +1,4 @@
-module donation-feed-backend
+module github.com/Viva-con-Agua/donation-feed-backend
 
 go 1.18
 
