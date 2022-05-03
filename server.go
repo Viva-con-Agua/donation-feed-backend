@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"donation-feed-backend/args"
+	"donation-feed-backend/broadcastChannel"
 	"donation-feed-backend/dao"
 	"donation-feed-backend/db"
 	"donation-feed-backend/handlers"
@@ -25,20 +26,21 @@ func main() {
 	e.Use(vcago.Logger.Init("donation-feed-backend"))
 
 	// setup required things
-	eventChan := make(chan dao.ServerSentEvent[dao.DonationEvent])
+	eventSourceChan := make(chan dao.ServerSentEvent[dao.DonationEvent])
+	eventBroadcastChan := broadcastChannel.NewBroadcastChannel(eventSourceChan)
 	_, dbCollection := db.SetupDb()
 
 	var natsConn *upstreamNats.EncodedConn
 	if *programArgs.StartDummyEmitter {
 		log.Info("Starting dummy emitter to emit fake donation events instead of NATS subscriber")
-		go runDummyEmitter(createPaymentEventHandler(eventChan, dbCollection))
+		go runDummyEmitter(createPaymentEventHandler(eventSourceChan, dbCollection))
 	} else {
 		natsConn, _ = nats.Connect(&programArgs)
-		_, _ = nats.SubscribeToPayments(natsConn, createPaymentEventHandler(eventChan, dbCollection))
+		_, _ = nats.SubscribeToPayments(natsConn, createPaymentEventHandler(eventSourceChan, dbCollection))
 	}
 
 	// setup http routes
-	e.GET("/api/donation-events", handlers.CreateHandlerForDonationFeed(eventChan))
+	e.GET("/api/donation-events", handlers.CreateHandlerForDonationFeed(eventBroadcastChan))
 
 	// start server
 	e.Logger.Fatal(e.Start(":" + strconv.Itoa(*programArgs.Port)))

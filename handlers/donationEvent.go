@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"donation-feed-backend/broadcastChannel"
 	"donation-feed-backend/dao"
 	"encoding/json"
 	"fmt"
@@ -8,8 +9,9 @@ import (
 	"net/http"
 )
 
-func CreateHandlerForDonationFeed(eventChan chan dao.ServerSentEvent[dao.DonationEvent]) func(c echo.Context) (err error) {
+func CreateHandlerForDonationFeed(broadcast *broadcastChannel.BroadcastChannel[dao.ServerSentEvent[dao.DonationEvent]]) func(c echo.Context) (err error) {
 	return func(c echo.Context) (err error) {
+		eventChan := broadcast.Subscribe()
 		responseWriter := c.Response().Writer
 		responseWriter.Header().Set("Content-Type", "text/event-stream")
 		responseWriter.Header().Set("Cache-Control", "no-store")
