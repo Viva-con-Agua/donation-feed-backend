@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/Viva-con-Agua/donation-feed-backend/args"
 	"github.com/Viva-con-Agua/donation-feed-backend/broadcastChannel"
 	"github.com/Viva-con-Agua/donation-feed-backend/dao"
@@ -13,7 +14,9 @@ import (
 	"github.com/labstack/gommon/log"
 	upstreamNats "github.com/nats-io/nats.go"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -75,8 +78,8 @@ func createPaymentEventHandler(eventChan chan dao.ServerSentEvent[dao.DonationEv
 			return
 		}
 
-		var totalMoney []bson.D
-		aggregateQuery := []bson.D{
+		var totalMoney []dao.AggregatedTotalMoney
+		aggregateQuery := mongo.Pipeline{
 			{
 				{"$group", bson.D{
 					{"_id", "$money.currency"},
@@ -87,7 +90,6 @@ func createPaymentEventHandler(eventChan chan dao.ServerSentEvent[dao.DonationEv
 			},
 		}
 		if err := db.Aggregate(context.Background(), aggregateQuery, &totalMoney); err != nil {
-			println(err.Error())
 			log.Error(err.Error())
 			return
 		}
@@ -96,12 +98,9 @@ func createPaymentEventHandler(eventChan chan dao.ServerSentEvent[dao.DonationEv
 		event := dao.ServerSentEvent[dao.DonationEvent]{
 			EventType: "donation",
 			Data: dao.DonationEvent{
-				Name: "finn",
-				DonatedMoney: vcago.Money{
-					Amount:   10,
-					Currency: "€",
-				},
-				TotalMoney: make(map[string]int64),
+				Name:         strings.TrimSpace(fmt.Sprintf("%s %s", payment.Contact.FirstName, payment.Contact.LastName)),
+				DonatedMoney: payment.Money,
+				TotalMoney:   dao.AggregatedTotalMoneyToMap(totalMoney),
 			},
 		}
 		select {
