@@ -12,6 +12,6 @@ RUN go mod download &&\
     go install /app/src
 
 # add additional image metadata
-ENV APP_PORT=80
-EXPOSE 80/tcp
+ENV APP_PORT=1323
+EXPOSE 1323/tcp
 CMD [ "donation-feed-backend" ]

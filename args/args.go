@@ -2,6 +2,7 @@ package args
 
 import (
 	"flag"
+
 	"github.com/Viva-con-Agua/vcago"
 )
 
@@ -21,12 +22,12 @@ func ParseProgramArgs() ProgramArguments {
 	)
 	args.Port = flag.Int(
 		"port",
-		vcago.Config.GetEnvInt("APP_PORT", "n", 8080),
+		vcago.Config.GetEnvInt("APP_PORT", "n", 1312),
 		"On which port that application should listen",
 	)
 	args.NatsUrl = flag.String(
 		"nats-url",
-		vcago.Config.GetEnvString("APP_NATS_URL", "e", ""),
+		vcago.Config.GetEnvString("NATS_URL", "e", ""),
 		"A nats:// url that is used to connect to a running NATS server",
 	)
 
