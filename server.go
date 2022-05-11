@@ -18,6 +18,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"math/rand"
 )
 
 func main() {
@@ -51,7 +52,7 @@ func main() {
 
 // Run an emitter that periodically publishes donation events on the given channel
 func runDummyEmitter(natsPaymentHandler func(payment *dao.Payment)) {
-	ticker := time.NewTicker(5000 * time.Millisecond)
+	ticker := time.NewTicker(3000 * time.Millisecond)
 	totalMoney := make(map[string]int64)
 	totalMoney["€"] = 0
 
@@ -59,16 +60,26 @@ func runDummyEmitter(natsPaymentHandler func(payment *dao.Payment)) {
 		<-ticker.C
 		natsPaymentHandler(&dao.Payment{
 			Money: vcago.Money{
-				Amount:   10,
+				Amount:   int64(rand.Intn((10000-500) + 500)),
 				Currency: "€",
 			},
 			Contact: dao.Contact{
-				FirstName: "Finn",
-				LastName:  "Sell",
+				FirstName: randSeq(6),
+				LastName:  randSeq(6),
 			},
 		})
 	}
 }
+var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func randSeq(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
+}
+
 
 // Create a handler that is able to handle new payments from NATS and process them into this application
 func createPaymentEventHandler(eventChan chan dao.ServerSentEvent[dao.DonationEvent], db *vcago.MongoColl) func(payment *dao.Payment) {
