@@ -2,6 +2,7 @@ package args
 
 import (
 	"flag"
+
 	"github.com/Viva-con-Agua/vcago"
 )
 
@@ -21,7 +22,7 @@ func ParseProgramArgs() ProgramArguments {
 	)
 	args.Port = flag.Int(
 		"port",
-		vcago.Config.GetEnvInt("APP_PORT", "n", 8080),
+		vcago.Config.GetEnvInt("APP_PORT", "n", 1312),
 		"On which port that application should listen",
 	)
 	args.NatsUrl = flag.String(

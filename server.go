@@ -28,7 +28,6 @@ func main() {
 	e.Validator = vcago.JSONValidator
 	e.Use(vcago.CORS.Init())
 	e.Use(vcago.Logger.Init("donation-feed-backend"))
-
 	// setup required things
 	eventSourceChan := make(chan dao.ServerSentEvent[dao.DonationEvent])
 	eventBroadcastChan := broadcastChannel.NewBroadcastChannel(eventSourceChan)
@@ -44,7 +43,7 @@ func main() {
 	}
 
 	// setup http routes
-	e.GET("/api/donation-events", handlers.CreateHandlerForDonationFeed(eventBroadcastChan))
+	e.GET("/v1/donation-events", handlers.CreateHandlerForDonationFeed(eventBroadcastChan))
 
 	// start server
 	e.Logger.Fatal(e.Start(":" + strconv.Itoa(*programArgs.Port)))

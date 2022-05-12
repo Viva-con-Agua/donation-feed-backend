@@ -16,6 +16,7 @@ func CreateHandlerForDonationFeed(broadcast *broadcastChannel.BroadcastChannel[d
 		responseWriter.Header().Set("Content-Type", "text/event-stream")
 		responseWriter.Header().Set("Cache-Control", "no-store")
 		responseWriter.Header().Set("Connection", "keep-alive")
+		responseWriter.Header().Set("X-Accel-Buffering", "no")
 		responseWriter.WriteHeader(http.StatusOK)
 
 		for {
