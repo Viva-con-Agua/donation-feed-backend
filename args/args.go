@@ -27,7 +27,7 @@ func ParseProgramArgs() ProgramArguments {
 	)
 	args.NatsUrl = flag.String(
 		"nats-url",
-		vcago.Config.GetEnvString("NATS_URL", "e", ""),
+		vcago.Config.GetEnvString("APP_NATS_URL", "e", ""),
 		"A nats:// url that is used to connect to a running NATS server",
 	)
 
